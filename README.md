@@ -6,10 +6,6 @@ The NEC PC-FX application for [webЯcade](https://www.webrcade.com) is an emulat
 
 The underlying emulator is a modified version of the Libretro fork of [Mednafen PC-FX](https://github.com/libretro/beetle-pcfx-libretro).
 
-## PC-FX Application 
-
-The PC-FX application is an emulator for the [PC-FX](https://en.wikipedia.org/wiki/PC-FX) game console.
-
 <p align="center">
  <a href="https://play.webrcade.com">
   <img src="https://docs.webrcade.com/assets/images/apps/pcfx.png" width="90%">
