@@ -1,10 +1,8 @@
-# webЯcade Applications: NEC PC-FX Emulator
+# webЯcade Application: NEC PC-FX Emulator
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This repository contains [webЯcade](https://www.webrcade.com) applications for the following NEC systems:
-
-* [PC-FX](#pc-fx-application)
+The NEC PC-FX application for [webЯcade](https://www.webrcade.com) is an emulator for the [NEC PC-FX](https://en.wikipedia.org/wiki/PC-FX) game console.
 
 The underlying emulator is a modified version of the Libretro fork of [Mednafen PC-FX](https://github.com/libretro/beetle-pcfx-libretro).
 
