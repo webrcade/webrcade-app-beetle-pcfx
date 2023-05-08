@@ -104,20 +104,46 @@ export class Emulator extends RetroAppWrapper {
     // Module._wrc_set_options(options);
   }
 
-  resizeScreen(canvas) {
-    // Determine the zoom level
-    let zoomLevel = 0;
-    if (this.getProps().zoomLevel) {
-      zoomLevel = this.getProps().zoomLevel;
-    }
+  // resizeScreen(canvas) {
+  //   // Determine the zoom level
+  //   let zoomLevel = 0;
+  //   if (this.getProps().zoomLevel) {
+  //     zoomLevel = this.getProps().zoomLevel;
+  //   }
 
-    const wsize = 106 + zoomLevel;
-    const hsize = 96 + zoomLevel;
-    canvas.style.setProperty('width', `${wsize}vw`, 'important');
-    canvas.style.setProperty('height', `${hsize}vh`, 'important');
-    canvas.style.setProperty('max-width', `calc(${hsize}vh*1.333)`, 'important');
-    canvas.style.setProperty('max-height', `calc(${wsize}vw*0.75)`, 'important');
+  //   const wsize = 106 + zoomLevel;
+  //   const hsize = 96 + zoomLevel;
+  //   canvas.style.setProperty('width', `${wsize}vw`, 'important');
+  //   canvas.style.setProperty('height', `${hsize}vh`, 'important');
+  //   canvas.style.setProperty('max-width', `calc(${hsize}vh*1.333)`, 'important');
+  //   canvas.style.setProperty('max-height', `calc(${wsize}vw*0.75)`, 'important');
+  // }
+
+  // getShotAspectRatio() { return 1.333; }
+
+  isForceAspectRatio() {
+    return false;
   }
 
-  getShotAspectRatio() { return 1.333; }
+  getDefaultAspectRatio() {
+    return 1.333;
+  }
+
+  resizeScreen(canvas) {
+    this.canvas = canvas;
+    // // Determine the zoom level
+    // let zoomLevel = 0;
+    // if (this.getProps().zoomLevel) {
+    //   zoomLevel = this.getProps().zoomLevel;
+    // }
+
+    // const size = 96 + zoomLevel;
+    // canvas.style.setProperty('width', `${size}vw`, 'important');
+    // canvas.style.setProperty('height', `${size}vh`, 'important');
+    // canvas.style.setProperty('max-width', `calc(${size}vh*1.22)`, 'important');
+    // canvas.style.setProperty('max-height', `calc(${size}vw*0.82)`, 'important');
+    this.updateScreenSize();
+  }
+
+  getShotAspectRatio() { return this.getDefaultAspectRatio(); }
 }
