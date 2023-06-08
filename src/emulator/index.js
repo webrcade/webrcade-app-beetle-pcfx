@@ -7,6 +7,9 @@ export class Emulator extends RetroAppWrapper {
 
   constructor(app, debug = false) {
     super(app, debug);
+
+    // Allow game saves to persist after loading state
+    this.saveManager.setDisableGameSaveOnStateLoad(false);
   }
 
   GAME_SRAM_NAME = 'game.srm';
