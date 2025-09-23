@@ -2,9 +2,9 @@ import React from 'react';
 import { Component } from 'react';
 
 import { Pce6GamepadControls, Pce6KeyboardControls } from './controls';
+import { PcfxSettingsEditor } from './settings';
 
 import {
-  AppSettingsEditor,
   CustomPauseScreen,
   EditorScreen,
   GamepadWhiteImage,
@@ -149,10 +149,7 @@ export class EmulatorPauseScreen extends Component {
         ) : null}
 
         {mode === ModeEnum.PCE_SETTINGS ? (
-          <AppSettingsEditor
-            emulator={emulator}
-            onClose={closeCallback}
-          />
+          <PcfxSettingsEditor emulator={emulator} onClose={closeCallback} />
         ) : null}
         {mode === ModeEnum.STATE ? (
           <SaveStatesEditor
