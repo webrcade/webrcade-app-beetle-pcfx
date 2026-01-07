@@ -1,19 +1,61 @@
 import {
+  DisplayLoop,
+  ScriptAudioProcessor,
   RetroAppWrapper,
   LOG,
 } from '@webrcade/app-common';
 
 export class Emulator extends RetroAppWrapper {
 
+  GAME_SRAM_NAME = 'game.srm';
+  SAVE_NAME = 'sav';
+
   constructor(app, debug = false) {
     super(app, debug);
 
     // Allow game saves to persist after loading state
     this.saveManager.setDisableGameSaveOnStateLoad(false);
+
+    this.audioStarted = 0;
+
+    this.total = 0;
+    this.count = 0;
+    this.audioCallback = (offset, length) => {
+      this.total += length;
+      this.count = this.count + 1;
+
+      if (this.count === 60) {
+        //console.log("total: " + this.total);
+        this.total = 0;
+        this.count = 0;
+      }
+
+      length = length << 1;
+      const audioArray = new Int16Array(window.Module.HEAP16.buffer, offset, length);
+      this.audioProcessor.storeSoundCombinedInput(audioArray, 2, length, 0, 32768);
+    };
   }
 
-  GAME_SRAM_NAME = 'game.srm';
-  SAVE_NAME = 'sav';
+  createAudioProcessor() {
+    return new ScriptAudioProcessor(
+      2,
+      44100,
+      8192 + 4096,
+      2048
+    ).setDebug(this.debug);
+  }
+
+  onFrame() {
+    if (this.audioStarted !== -1) {
+      if (this.audioStarted > 1) {
+        this.audioStarted = -1;
+        // Start the audio processor
+        this.audioProcessor.start();
+      } else {
+        this.audioStarted++;
+      }
+    }
+  }
 
   getScriptUrl() {
     return 'js/mednafen_pcfx_libretro.js';
@@ -21,6 +63,17 @@ export class Emulator extends RetroAppWrapper {
 
   getPrefs() {
     return this.prefs;
+  }
+
+  createDisplayLoop(debug) {
+    const loop = new DisplayLoop(
+      60,
+      true, // vsync
+      debug, // debug
+      false,
+    );
+    // loop.setAdjustTimestampEnabled(false);
+    return loop;
   }
 
   async saveState() {
