@@ -5,10 +5,12 @@ import { Pce6GamepadControls, Pce6KeyboardControls } from './controls';
 import { PcfxSettingsEditor } from './settings';
 
 import {
+  AchievementsScreen,
   BoltWhiteImage,
   CheatsSettingsEditor,
   CustomPauseScreen,
   EditorScreen,
+  EmojiEventsWhiteImage,
   GamepadWhiteImage,
   KeyboardWhiteImage,
   PauseScreenButton,
@@ -18,6 +20,7 @@ import {
   SaveWhiteImage,
   SettingsAppWhiteImage,
   TEXT_IDS,
+  achievements,
 } from '@webrcade/app-common';
 
 export class EmulatorPauseScreen extends Component {
@@ -34,9 +37,11 @@ export class EmulatorPauseScreen extends Component {
     PCE_SETTINGS: 'pce-settings',
     CHEATS: 'cheats',
     STATE: 'state',
+    ACHIEVEMENTS: 'achievements',
   };
 
   ADDITIONAL_BUTTON_REFS = [React.createRef(), React.createRef(), React.createRef(), React.createRef()];
+  SECONDARY_BUTTON_REFS = [React.createRef(), React.createRef()];
 
   componentDidMount() {
     const { loaded } = this.state;
@@ -56,7 +61,7 @@ export class EmulatorPauseScreen extends Component {
   }
 
   render() {
-    const { ADDITIONAL_BUTTON_REFS, ModeEnum } = this;
+    const { ADDITIONAL_BUTTON_REFS, SECONDARY_BUTTON_REFS, ModeEnum } = this;
     const {
       appProps,
       closeCallback,
@@ -73,6 +78,7 @@ export class EmulatorPauseScreen extends Component {
 
     const additionalButtons = [
       <PauseScreenButton
+        key="controls"
         imgSrc={GamepadWhiteImage}
         buttonRef={ADDITIONAL_BUTTON_REFS[0]}
         label={Resources.getText(TEXT_IDS.VIEW_CONTROLS)}
@@ -87,6 +93,7 @@ export class EmulatorPauseScreen extends Component {
 
     additionalButtons.push(
       <PauseScreenButton
+        key="settings"
         imgSrc={SettingsAppWhiteImage}
         buttonRef={ADDITIONAL_BUTTON_REFS[1]}
         label="PC-FX Settings"
@@ -99,14 +106,36 @@ export class EmulatorPauseScreen extends Component {
       />
     );
 
-    if (emulator.getCheatsService().getList().length > 0) {
+    if (cloudEnabled) {
       additionalButtons.push(
         <PauseScreenButton
-          imgSrc={BoltWhiteImage}
+          key="state"
+          imgSrc={SaveWhiteImage}
           buttonRef={ADDITIONAL_BUTTON_REFS[2]}
-          label="Cheats"
+          label={Resources.getText(TEXT_IDS.SAVE_STATES)}
           onHandlePad={(focusGrid, e) =>
             focusGrid.moveFocus(e.type, ADDITIONAL_BUTTON_REFS[2])
+          }
+          onClick={() => {
+            this.setState({ mode: ModeEnum.STATE });
+          }}
+        />
+      );
+    }
+
+    const secondaryButtons = [];
+    let secondaryRefIdx = 0;
+
+    if (emulator.getCheatsService().getList().length > 0) {
+      const cheatsRef = SECONDARY_BUTTON_REFS[secondaryRefIdx++];
+      secondaryButtons.push(
+        <PauseScreenButton
+          key="cheats"
+          imgSrc={BoltWhiteImage}
+          buttonRef={cheatsRef}
+          label="Cheats"
+          onHandlePad={(focusGrid, e) =>
+            focusGrid.moveFocus(e.type, cheatsRef)
           }
           onClick={() => {
             this.setState({ mode: ModeEnum.CHEATS });
@@ -115,21 +144,25 @@ export class EmulatorPauseScreen extends Component {
       );
     }
 
-    if (cloudEnabled) {
-      additionalButtons.push(
+    if (achievements.isLoggedIn() && achievements.hasAchievements()) {
+      const achievementsRef = SECONDARY_BUTTON_REFS[secondaryRefIdx++];
+      secondaryButtons.push(
         <PauseScreenButton
-          imgSrc={SaveWhiteImage}
-          buttonRef={ADDITIONAL_BUTTON_REFS[3]}
-          label={Resources.getText(TEXT_IDS.SAVE_STATES)}
+          key="achievements"
+          imgSrc={EmojiEventsWhiteImage}
+          buttonRef={achievementsRef}
+          label="Achievements"
           onHandlePad={(focusGrid, e) =>
-            focusGrid.moveFocus(e.type, ADDITIONAL_BUTTON_REFS[3])
+            focusGrid.moveFocus(e.type, achievementsRef)
           }
           onClick={() => {
-            this.setState({ mode: ModeEnum.STATE });
+            this.setState({ mode: ModeEnum.ACHIEVEMENTS });
           }}
         />
       );
     }
+
+    const usedSecondaryRefs = SECONDARY_BUTTON_REFS.slice(0, secondaryRefIdx);
 
     const gamepad = <Pce6GamepadControls />;
     const keyboard = <Pce6KeyboardControls />;
@@ -147,6 +180,8 @@ export class EmulatorPauseScreen extends Component {
             isStandalone={isStandalone}
             additionalButtonRefs={ADDITIONAL_BUTTON_REFS}
             additionalButtons={additionalButtons}
+            secondaryButtonRefs={usedSecondaryRefs}
+            secondaryButtons={secondaryButtons}
           />
         ) : null}
         {mode === ModeEnum.CONTROLS ? (
@@ -182,6 +217,11 @@ export class EmulatorPauseScreen extends Component {
             emulator={emulator}
             onClose={closeCallback}
             showStatusCallback={emulator.saveMessageCallback}
+          />
+        ) : null}
+        {mode === ModeEnum.ACHIEVEMENTS ? (
+          <AchievementsScreen
+            onClose={closeCallback}
           />
         ) : null}
       </>
