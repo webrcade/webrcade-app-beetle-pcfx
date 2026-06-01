@@ -45,6 +45,10 @@ export class Emulator extends RetroAppWrapper {
     ).setDebug(this.debug);
   }
 
+  getHashFileExtension() {
+    return 'chd';
+  }
+
   onFrame() {
     if (this.audioStarted !== -1) {
       if (this.audioStarted > 1) {
