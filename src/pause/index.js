@@ -14,7 +14,7 @@ import {
   GamepadWhiteImage,
   KeyboardWhiteImage,
   PauseScreenButton,
-  PceCdBackground,
+  PcfxBackground,
   Resources,
   SaveStatesEditor,
   SaveWhiteImage,
@@ -213,7 +213,7 @@ export class EmulatorPauseScreen extends Component {
         ) : null}
         {mode === ModeEnum.STATE ? (
           <SaveStatesEditor
-            emptyImageSrc={PceCdBackground}
+            emptyImageSrc={PcfxBackground}
             emulator={emulator}
             onClose={closeCallback}
             showStatusCallback={emulator.saveMessageCallback}
