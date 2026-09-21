@@ -1,11 +1,11 @@
 import {
+  BasicRetroAppWrapper,
   DisplayLoop,
   ScriptAudioProcessor,
-  RetroAppWrapper,
   LOG,
 } from '@webrcade/app-common';
 
-export class Emulator extends RetroAppWrapper {
+export class Emulator extends BasicRetroAppWrapper {
 
   GAME_SRAM_NAME = 'game.srm';
   SAVE_NAME = 'sav';
@@ -59,6 +59,26 @@ export class Emulator extends RetroAppWrapper {
         this.audioStarted++;
       }
     }
+
+    // Touch/mouse/keyboard interaction detection + on-screen touch overlay
+    // gating is inherited from BasicRetroAppWrapper.
+    super.onFrame();
+  }
+
+  // Base class default pauses on any tap anywhere on screen -- redundant
+  // (and disruptive) now that there's a dedicated Pause button in the
+  // touch overlay. Same override every other TouchOverlay app uses for
+  // the same reason.
+  createTouchListener() {}
+
+  // WRC - PC-FX's real controller is a 6-button PCE-style pad (I-VI) +
+  // Run/Select, no trigger buttons at all, so there's no real
+  // extended-hold LTRIG function that could collide with the LT+LA pause
+  // combo - see docs/escape-hack-audit.md's decision rule. Previously left
+  // at the inherited `true` default, which meant holding the pause combo
+  // itself for more than ~1s would silently fail to open Pause.
+  isEscapeHackEnabled() {
+    return false;
   }
 
   getScriptUrl() {
