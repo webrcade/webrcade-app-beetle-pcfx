@@ -203,7 +203,7 @@ export class EmulatorPauseScreen extends Component {
         ) : null}
 
         {mode === ModeEnum.PCE_SETTINGS ? (
-          <PcfxSettingsEditor emulator={emulator} onClose={closeCallback} />
+          <PcfxSettingsEditor emulator={emulator} onClose={closeCallback} showOnScreenControls={true} />
         ) : null}
         {mode === ModeEnum.CHEATS ? (
           <CheatsSettingsEditor
